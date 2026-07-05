@@ -1,128 +1,121 @@
-from fastapi import FastAPI, Depends
-from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import HTTPException
-from sqlalchemy import select
+from fastapi import FastAPI
+from schemas import CourseCreate, CourseUpdate
 from typing import Optional
-from database import Base, engine, get_db
+from fastapi import Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from database import get_db
+from sqlalchemy import select, delete
 from models import Course
-from schemas import CourseCreate, CourseUpdate, CourseResponse
-
-app = FastAPI(
-    title="Course Management API",
-    version="1.0"
-)
+from contextlib import asynccontextmanager
+from database import engine, Base
+import models
 
 
-@app.on_event("startup")
-async def startup():
+@asynccontextmanager
+async def lifespan(app):
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+    yield
 
+app=FastAPI(title="Course Management API", version="1.0", lifespan=lifespan)
 
 @app.get("/")
-async def root():
-    return {"message": "API running"}
+def root():
+    return {"message": "API Running"}
 
+'''    
+@app.post("/api/courses")
+async def create_course(course: CourseCreate):
+    return course
+'''
 
-@app.post(
-    "/api/courses/",
-    response_model=CourseResponse
-)
-async def create_course(
-    course: CourseCreate,
-    db: AsyncSession = Depends(get_db)
-):
-
-    new_course = Course(
+@app.post("/api/courses/")
+async def create_course(course: CourseCreate, db: AsyncSession = Depends(get_db)):
+    db_course = Course(
         name=course.name,
         code=course.code,
         credits=course.credits,
         department_id=course.department_id
     )
-
-    db.add(new_course)
-
+    db.add(db_course)
     await db.commit()
-
-    await db.refresh(new_course)
-
-    return new_course
-@app.get(
-    "/api/courses/{course_id}",
-    response_model=CourseResponse
-)
-async def get_course(
-    course_id: int,
-    db: AsyncSession = Depends(get_db)
-):
+    await db.refresh(db_course)
+    return db_course
+''''
+@app.get("/api/courses/{course_id}")
+async def get_course(course_id: int):
+    return {"course_id":course_id}
+'''
+@app.get("/api/courses/{course_id}")
+async def get_course(course_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(
         select(Course).where(Course.id == course_id)
     )
-
-    course = result.scalar_one_or_none()
-
+    course = result.scalar()
     if course is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Course not found"
-        )
-
+        return {"message": "Course not found"}
     return course
-@app.get(
-    "/api/courses/",
-    response_model=list[CourseResponse]
-)
-async def get_courses(
-    skip: int = 0,
-    limit: int = 10,
-    department_id: Optional[int] = None,
-    db: AsyncSession = Depends(get_db)
-):
 
-    stmt = select(Course)
+'''
+@app.get("/api/courses/")
+async def get_courses(skip: int=0, limit: int=10, department_id: Optional[int]=None):
+    return {
+        "skip":skip,
+        "limit":limit,
+        "deparment_id":department_id
+    }
+'''
 
-    # Filter by department if provided
+@app.get("/api/courses/")
+async def get_courses(skip: int = 0, limit: int = 10, department_id: Optional[int] = None, db: AsyncSession = Depends(get_db)):
+    query = select(Course)
     if department_id is not None:
-        stmt = stmt.where(Course.department_id == department_id)
+        query = query.where(Course.department_id == department_id)
+    query = query.offset(skip).limit(limit)
+    result = await db.execute(query)
+    return result.scalars().all()
 
-    # Apply pagination
-    stmt = stmt.offset(skip).limit(limit)
-
-    result = await db.execute(stmt)
-
+'''
+@app.get("/api/courses/")
+async def get_courses(db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(Course))
     courses = result.scalars().all()
-
     return courses
-@app.put(
-    "/api/courses/{course_id}",
-    response_model=CourseResponse
-)
+'''
+
+
+@app.put("/api/courses/{course_id}")
 async def update_course(
     course_id: int,
-    course_data: CourseUpdate,
+    updated: CourseUpdate,
     db: AsyncSession = Depends(get_db)
 ):
     result = await db.execute(
         select(Course).where(Course.id == course_id)
     )
 
-    course = result.scalar_one_or_none()
+    course = result.scalar()
 
     if course is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Course not found"
-        )
+        return {"message": "Course not found"}
 
-    update_data = course_data.model_dump(exclude_unset=True)
+    if updated.name is not None:
+        course.name = updated.name
 
-    for key, value in update_data.items():
-        setattr(course, key, value)
+    if updated.code is not None:
+        course.code = updated.code
+
+    if updated.credits is not None:
+        course.credits = updated.credits
+
+    if updated.department_id is not None:
+        course.department_id = updated.department_id
 
     await db.commit()
     await db.refresh(course)
 
     return course
+
 @app.delete("/api/courses/{course_id}")
 async def delete_course(
     course_id: int,
@@ -132,17 +125,12 @@ async def delete_course(
         select(Course).where(Course.id == course_id)
     )
 
-    course = result.scalar_one_or_none()
+    course = result.scalar()
 
     if course is None:
-        raise HTTPException(
-            status_code=404,
-            detail="Course not found"
-        )
+        return {"message": "Course not found"}
 
     await db.delete(course)
     await db.commit()
 
-    return {
-        "message": "Course deleted successfully"
-    }
+    return {"message": "Course deleted"}

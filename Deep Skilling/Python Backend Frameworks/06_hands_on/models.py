@@ -1,12 +1,13 @@
-from sqlalchemy import Column, Integer, String
-from database import Base
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
 
+from database import Base
 
 class Course(Base):
     __tablename__ = "courses"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
-    code = Column(String, unique=True, nullable=False)
-    credits = Column(Integer, nullable=False)
-    department_id = Column(Integer, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(100))
+    code: Mapped[str] = mapped_column(String(20))
+    credits: Mapped[int]
+    department_id: Mapped[int]
