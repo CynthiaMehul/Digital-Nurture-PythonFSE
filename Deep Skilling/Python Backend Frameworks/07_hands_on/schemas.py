@@ -1,142 +1,73 @@
-from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, List
-from datetime import datetime
+from pydantic import BaseModel, ConfigDict
+from datetime import date
+from typing import Optional
 
-
-# User Schemas
-class UserCreate(BaseModel):
-    username: str = Field(..., min_length=3, max_length=50)
-    email: EmailStr
-    password: str = Field(..., min_length=8)
-
-
-class UserLogin(BaseModel):
-    username: str
-    password: str
-
-
-class UserResponse(BaseModel):
-    id: int
-    username: str
-    email: str
-    is_active: bool
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-
-
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-
-# Department Schemas
-class DepartmentBase(BaseModel):
+class CourseCreate(BaseModel):
     name: str
-    head_of_dept: Optional[str] = None
-    budget: Optional[float] = 0.0
+    code: str
+    credits: int
+    department_id: int
 
+class CourseUpdate(BaseModel):
+    name: Optional[str]=None
+    code: Optional[str]=None
+    credits: Optional[int]=None
+    department_id: Optional[int]=None
 
-class DepartmentCreate(DepartmentBase):
-    pass
-
-
-class DepartmentUpdate(BaseModel):
-    name: Optional[str] = None
-    head_of_dept: Optional[str] = None
-    budget: Optional[float] = None
-
-
-class DepartmentResponse(DepartmentBase):
-    id: int
-
-    class Config:
-        from_attributes = True
-
-
-# Course Schemas
-class CourseBase(BaseModel):
+class CourseResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    course_id: int
     name: str
     code: str
     credits: int
     department_id: int
 
 
-class CourseCreate(CourseBase):
-    pass
-
-
-class CourseUpdate(BaseModel):
-    name: Optional[str] = None
-    code: Optional[str] = None
-    credits: Optional[int] = None
-    department_id: Optional[int] = None
-
-
-class CourseResponse(CourseBase):
-    id: int
-    department: Optional[DepartmentResponse] = None
-
-    class Config:
-        from_attributes = True
-
-
-class CourseWithStudentsResponse(CourseResponse):
-    students: List['StudentResponse'] = []
-
-
-# Student Schemas
-class StudentBase(BaseModel):
+class StudentCreate(BaseModel):
     first_name: str
     last_name: str
-    email: EmailStr
+    email: str
     department_id: int
-    enrollment_year: Optional[int] = None
-
-
-class StudentCreate(StudentBase):
-    pass
-
+    enrollment_year: int
 
 class StudentUpdate(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
-    email: Optional[EmailStr] = None
+    email: Optional[str] = None
     department_id: Optional[int] = None
     enrollment_year: Optional[int] = None
 
+class StudentResponse(BaseModel):
+    model_config=ConfigDict(from_attributes=True)
 
-class StudentResponse(StudentBase):
-    id: int
+    student_id:int
+    first_name:str
+    last_name:str
+    email:str
+    department_id:int
+    enrollment_year:int
 
-    class Config:
-        from_attributes = True
 
-
-# Enrollment Schemas
-class EnrollmentBase(BaseModel):
+class EnrollmentCreate(BaseModel):
     student_id: int
     course_id: int
+    enrollment_date: date
+    grade: Optional[str] = None 
+
+class EnrollmentUpdate(BaseModel):
+    student_id: Optional[int] = None
+    course_id: Optional[int] = None
+    enrollment_date: Optional[date] = None
     grade: Optional[str] = None
-
-
-class EnrollmentCreate(EnrollmentBase):
-    pass
-
 
 class EnrollmentResponse(BaseModel):
-    id: int
+    model_config = ConfigDict(from_attributes=True)
+
+    enrollment_id: int
     student_id: int
     course_id: int
-    enrollment_date: datetime
-    grade: Optional[str] = None
-    student: Optional[StudentResponse] = None
-    course: Optional[CourseResponse] = None
-
-    class Config:
-        from_attributes = True
+    enrollment_date: date
+    grade: Optional[str]   
 
 
-# Update forward references
-CourseWithStudentsResponse.model_rebuild()
+    
