@@ -21,6 +21,7 @@ app = FastAPI(
         "name": "Cynthia",
         "email": "cynthia@example.com"
     }
+    lifespan=lifespan
 )
 
 async def get_db():
