@@ -1,54 +1,55 @@
-# Hands-On 10: Microservices Architecture
+# Course Management Microservices
 
-## Course Management System - Microservices Implementation
+| Service              | Responsibility              | Endpoints          | Database         |
+|----------------------|-----------------------------|--------------------|------------------|
+| Student Service      | Student CRUD and enrollment | /api/students      | students.db      |
+| Course Service       | Course CRUD                 | /api/courses       | courses.db       |
+| Auth Service         | Registration, Login, JWT    |                    | auth.db          |
+| Notification Service | Email notifications         | /api/notifications | notifications.db |
 
-### Architecture Overview
 
-This project demonstrates a microservices-based architecture for a Course Management System with three independent services and an API Gateway.
+# Inter-Service Communication
 
-### Services
+## Synchronous Communication (HTTP)
 
-#### 1. API Gateway (Port 5000)
-- Routes requests to appropriate services
-- Handles authentication header forwarding
-- Provides health check endpoint
-- Implements request logging
+In synchronous communication, one service sends an HTTP request to another service and waits for a response before continuing.
 
-#### 2. Course Service (Port 5001)
-- Manages departments and courses
-- Owns its own database (courses.db)
-- Endpoints: /api/courses/*, /api/departments/*
+### Advantages
 
-#### 3. Student Service (Port 5002)
-- Manages students and enrollments
-- Owns its own database (students.db)
-- Communicates with Course Service via HTTP
-- Endpoints: /api/students/*
+* Simple to implement.
+* Immediate response.
+* Easy to test.
 
-#### 4. Auth Service (Port 5003)
-- Handles authentication and authorization
-- Owns its own database (auth.db)
-- JWT token generation and validation
-- Endpoints: /api/auth/*
+### Disadvantages
 
-### Service Communication
+* Services are tightly coupled.
+* If one service is down, the request fails.
 
-#### Synchronous Communication (HTTP)
-- Student Service → Course Service: Verify course exists
-- API Gateway → Services: Route requests
+Example: Student Service calls Course Service to verify a course before enrollment.
 
-#### Communication Flow for Enrollment:
-1. Client → API Gateway: POST /api/students/1/enroll
-2. API Gateway → Student Service: Forward request
-3. Student Service → Course Service: GET /api/courses/1
-4. Course Service → Student Service: Course exists
-5. Student Service: Creates enrollment
-6. Student Service → API Gateway: Success response
-7. API Gateway → Client: Response
 
-### Running the Services
+## Asynchronous Communication (Message Queue)
 
-#### 1. Start Course Service
-```bash
-cd course_service
-python app.py
+In asynchronous communication, a service sends a message to a queue instead of directly calling another service. The receiving service processes it later.
+
+### Advantages
+
+* Services are loosely coupled.
+* Better scalability and fault tolerance.
+
+## Disadvantages
+
+* More complex to set up.
+* Response is not immediate.
+
+
+## When to use RabbitMQ or Kafka?
+
+Use RabbitMQ or Kafka when one service doesn't need an immediate response from another service. Instead of waiting, it sends a message and continues its work, while the other service processes the message later.
+
+Examples:
+* Sending email notifications
+* Logging
+* Processing background tasks
+* Real-time event streaming (Kafka)
+
