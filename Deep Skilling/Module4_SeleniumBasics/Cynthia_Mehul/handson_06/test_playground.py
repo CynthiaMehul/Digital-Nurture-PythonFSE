@@ -14,24 +14,23 @@ import pytest
     ]
 )
 
-
 def test_simple_form_submission(driver, message, base_url):
     driver.get(base_url)
+
     driver.find_element(By.LINK_TEXT, "Simple Form Demo").click()
     driver.find_element(By.ID, "user-message").send_keys(message)
-
-    time.sleep(5)
     button = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.ID, "showInput"))
     )
+    time.sleep(5)
     button.click()
-    if WebDriverWait(driver, 10).until(
-    EC.text_to_be_present_in_element(
-        (By.ID, "message"),
-        message
-    )):
-        output=driver.find_element(By.ID,"message")
-
+    WebDriverWait(driver, 10).until(
+        EC.text_to_be_present_in_element(
+            (By.ID, "message"),
+            message
+        )
+    )
+    output = driver.find_element(By.ID, "message")
     print(f"Message displayed: {output.text}")
     assert output.text == message
 

@@ -3,212 +3,111 @@ from sqlalchemy import (
     Column,
     Integer,
     String,
-    Date,
-    Boolean,
     ForeignKey,
-    Numeric
+    Date,
+    CHAR,
+    Boolean
 )
-
 from sqlalchemy.orm import declarative_base, relationship
 
-# ============================================
-# Database Connection
-# ============================================
-
-DATABASE_URL = "postgresql://postgres:password@localhost/college_db_orm"
-
-# If using MySQL
-# DATABASE_URL = "mysql+mysqlconnector://root:password@localhost/college_db_orm"
-
-engine = create_engine(DATABASE_URL, echo=True)
+engine = create_engine(
+    "mysql+mysqlconnector://root:root@localhost/college_db_orm",
+    echo=True
+)
 
 Base = declarative_base()
 
-
-# ============================================
-# Department
-# ============================================
-
 class Department(Base):
-
     __tablename__ = "departments"
 
-    department_id = Column(Integer, primary_key=True)
-
+    department_id = Column(Integer, primary_key=True, autoincrement=True)
     dept_name = Column(String(100), nullable=False)
 
-    hod_name = Column(String(100))
-
-    budget = Column(Numeric(12,2))
-
     students = relationship("Student", back_populates="department")
-
-    courses = relationship("Course", back_populates="department")
-
     professors = relationship("Professor", back_populates="department")
 
 
-# ============================================
-# Student
-# ============================================
-
 class Student(Base):
-
     __tablename__ = "students"
 
-    student_id = Column(Integer, primary_key=True)
-
+    student_id = Column(Integer, primary_key=True, autoincrement=True)
     first_name = Column(String(50), nullable=False)
-
     last_name = Column(String(50), nullable=False)
-
     email = Column(String(100), unique=True)
-
-    date_of_birth = Column(Date)
-
-    department_id = Column(
-        Integer,
-        ForeignKey("departments.department_id")
-    )
-
     enrollment_year = Column(Integer)
+    is_active=Column(Boolean,default=True)
+    department_id = Column(Integer, ForeignKey("departments.department_id"))
+    
+    department = relationship("Department", back_populates="students")
+    enrollments = relationship("Enrollment", back_populates="student")
 
-    # New column for Task 2
-    is_active = Column(Boolean, default=True)
-
-    department = relationship(
-        "Department",
-        back_populates="students"
-    )
-
-    enrollments = relationship(
-        "Enrollment",
-        back_populates="student"
-    )
-
-
-# ============================================
-# Course
-# ============================================
 
 class Course(Base):
-
     __tablename__ = "courses"
 
-    course_id = Column(Integer, primary_key=True)
-
-    course_name = Column(String(150))
-
+    course_id = Column(Integer, primary_key=True, autoincrement=True)
     course_code = Column(String(20), unique=True)
-
+    course_name = Column(String(100))
     credits = Column(Integer)
 
-    department_id = Column(
-        Integer,
-        ForeignKey("departments.department_id")
-    )
+    enrollments = relationship("Enrollment", back_populates="course")
+    schedules = relationship("CourseSchedule", back_populates="course")
 
-    department = relationship(
-        "Department",
-        back_populates="courses"
-    )
-
-    enrollments = relationship(
-        "Enrollment",
-        back_populates="course"
-    )
-
-
-# ============================================
-# Enrollment
-# ============================================
 
 class Enrollment(Base):
-
     __tablename__ = "enrollments"
 
-    enrollment_id = Column(Integer, primary_key=True)
-
+    enrollment_id = Column(Integer, primary_key=True, autoincrement=True)
     student_id = Column(
         Integer,
         ForeignKey("students.student_id")
     )
-
     course_id = Column(
         Integer,
         ForeignKey("courses.course_id")
     )
-
     enrollment_date = Column(Date)
-
-    grade = Column(String(2))
+    grade = Column(CHAR(2))
 
     student = relationship(
         "Student",
         back_populates="enrollments"
     )
-
     course = relationship(
         "Course",
         back_populates="enrollments"
     )
 
 
-# ============================================
-# Professor
-# ============================================
-
 class Professor(Base):
-
     __tablename__ = "professors"
 
-    professor_id = Column(Integer, primary_key=True)
-
-    prof_name = Column(String(100))
-
+    professor_id = Column(Integer, primary_key=True, autoincrement=True)
+    first_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
     email = Column(String(100), unique=True)
-
     department_id = Column(
         Integer,
         ForeignKey("departments.department_id")
     )
-
-    salary = Column(Numeric(10,2))
 
     department = relationship(
         "Department",
         back_populates="professors"
     )
 
-
-# ============================================
-# New Table (Task 2)
-# ============================================
-
 class CourseSchedule(Base):
-
     __tablename__ = "course_schedules"
 
-    schedule_id = Column(Integer, primary_key=True)
+    schedule_id=Column(Integer,primary_key=True,autoincrement=True)
+    course_id=Column(Integer, ForeignKey("courses.course_id"))
+    day_of_week=Column(String(20), nullable=False)
+    start_time=Column(String(10), nullable=False)
+    end_time=Column(String(10), nullable=False)
 
-    course_id = Column(
-        Integer,
-        ForeignKey("courses.course_id")
-    )
+    course=relationship("Course", back_populates="schedules")
 
-    day_of_week = Column(String(20))
-
-    start_time = Column(String(20))
-
-    end_time = Column(String(20))
-
-
-# ============================================
-# Create Tables
-# ============================================
 
 if __name__ == "__main__":
-
     Base.metadata.create_all(engine)
-
-    print("Database Created Successfully")
+    print("All tables created successfully!")
