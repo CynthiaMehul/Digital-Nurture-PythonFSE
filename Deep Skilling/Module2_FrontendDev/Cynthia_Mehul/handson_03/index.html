@@ -5,47 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Portal</title>
     <link rel="stylesheet" href="style.css">
+    <script type="module" src="app.js"></script>
 </head>
 <body>
 
 <header>
-    <h1>Student Portal</h1>
+    <h2>Student Portal</h2>
+
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Courses</a></li>
+            <li><a href="#">Profile</a></li>
+            <li><a href="#">Grades</a></li>
+        </ul>
+    </nav>
 </header>
 
 <main>
 
-<section id="hero">
-    <h2>Student Portal</h2>
-    <p>Explore your courses.</p>
-</section>
+    <section id="hero">
+        <h1>Welcome to Student Portal</h1>
+        <p>Discover courses, track your grades, and explore your learning journey.</p>
+        <button>Explore Courses</button>
+    </section>
 
-<section id="courses">
+    <section id="stats">
+        <div class="stat">
+            <h3>3</h3>
+            <p>Courses Enrolled</p>
+        </div>
 
-    <h2>Available Courses</h2>
+        <div class="stat">
+            <h3>3.8</h3>
+            <p>GPA</p>
+        </div>
 
-    <input
-        type="text"
-        id="search-courses"
-        placeholder="Search courses..."
-    >
+        <div class="stat">
+            <h3>6</h3>
+            <p>Semester</p>
+        </div>
+    </section>
 
-    <button id="sort-btn">
-        Sort by Credits
-    </button>
+    <section id="courses">
 
-    <div class="course-grid">
+        <h2>Available Courses</h2>
 
-    </div>
+        <input id="search-courses" placeholder="Search Courses...">
+        <button id="sort-button" onclick="sortButton()">Sort by Credits</button>
+        <div class="course-grid">
 
-    <p id="total-credits"></p>
+        </div>
+        <p id="credits"></p>
 
-    <div id="selected-course"></div>
-
-</section>
+    </section>
 
 </main>
 
-<script type="module" src="app.js"></script>
+<footer>
+    <p>&copy; 2026 Student Portal. All Rights Reserved.</p>
+</footer>
 
 </body>
 </html>

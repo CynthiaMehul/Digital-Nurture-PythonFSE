@@ -1,4 +1,4 @@
-export const courses = [
+const courses = [
     {
         id: 1,
         name: "Machine Learning",
@@ -35,3 +35,5 @@ export const courses = [
         grade: "A+"
     }
 ];
+
+export default courses;

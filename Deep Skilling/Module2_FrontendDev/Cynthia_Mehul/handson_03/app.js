@@ -1,101 +1,82 @@
-import { courses } from "./data.js";
+import courses from './data.js'
 
-courses.forEach(course => {
-    const { name, credits } = course;
-    console.log(`${name} - ${credits} credits`);
+let courseGrid=document.querySelector('.course-grid');
+function renderCourses(courses){
+    for(let i=0;i<courses.length;i++){
+        const articleElement=document.createElement("article");
+        articleElement.className="course-card";
+        articleElement.dataset.name=courses[i].name;
+        articleElement.dataset.grade=courses[i].grade;
+        articleElement.innerHTML=`
+            <h3>${courses[i].code}</h3>
+            <h4>${courses[i].name}</h4>
+            <p>Credits: ${courses[i].credits}<p>
+        `
+        courseGrid.append(articleElement);
+    }
+}
+// TASK 1
+
+const formattedCourses=courses.map((course)=>{
+    return `${course.code} - ${course.name} (${course.credits} credits)`
 });
 
-const formattedCourses = courses.map(
-    course => `${course.code} — ${course.name} (${course.credits} credits)`
-);
+console.log("Fomatted Courses:");
 
-console.log(formattedCourses);
+// for(let i=0;i<courses.length;i++){
+//     console.log(formattedCourses[i])
+// }
 
-const filteredCourses = courses.filter(course => course.credits >= 4);
+formattedCourses.forEach(course=>console.log(course));
 
-console.log("Courses with >=4 credits:", filteredCourses.length);
+const filteredCourses=courses.filter((course)=>{
+    return course.credits>=4
+});
 
-const totalCredits = courses.reduce(
-    (sum, course) => sum + course.credits,
-    0
-);
+console.log("\nNumber of Courses with Credits Greater than 4:",filteredCourses.length);
 
-console.log("Total Credits:", totalCredits);
+const totalCredits=courses.reduce((acc,course)=>{
+    return acc+course.credits
+},0);
 
-const courseGrid = document.querySelector(".course-grid");
-const total = document.getElementById("total-credits");
-const search = document.getElementById("search-courses");
-const sortBtn = document.getElementById("sort-btn");
-const selected = document.getElementById("selected-course");
+console.log("\nTotal Number of Credits:",totalCredits);
 
-let currentCourses = [...courses];
+// TASK 2
 
-function renderCourses(courseList){
+renderCourses(courses)
 
-    courseGrid.innerHTML = "";
+const creditTag=document.getElementById("credits")
+creditTag.innerText=`Credits: ${totalCredits}`
 
-    courseList.forEach(course => {
+// TASK 3
 
-        const card = document.createElement("article");
+const searchInput=document.getElementById("search-courses");
 
-        card.className = "course-card";
+searchInput.addEventListener("input", (event)=>{
+    const searchValue=event.target.value.toLowerCase()
+    let renderedCourse=courses.filter((course)=>{
+        return course.name.toLowerCase().startsWith(searchValue)
+    })
 
-        card.dataset.id = course.id;
+    courseGrid.innerHTML="";
+    renderCourses(renderedCourse)
+});
 
-        card.innerHTML = `
-            <h3>${course.name}</h3>
-            <p>${course.code}</p>
-            <span>Credits: ${course.credits}</span>
-        `;
+function sortButton(){
+    courseGrid.innerHTML="";
+    let renderedCourse=courses.sort((a,b)=>b.credits-a.credits);
 
-        courseGrid.appendChild(card);
-
-    });
-
-    const totalCredits = courseList.reduce(
-        (sum, course) => sum + course.credits,
-        0
-    );
-
-    total.textContent = `Total Credits: ${totalCredits}`;
+    renderCourses(renderedCourse)
 }
 
-renderCourses(currentCourses);
+const sortBtn = document.getElementById("sort-button")
 
-
-search.addEventListener("input", () => {
-
-    const value = search.value.toLowerCase();
-
-    const filtered = currentCourses.filter(course =>
-        course.name.toLowerCase().includes(value)
-    );
-
-    renderCourses(filtered);
-
-});
-
-
-sortBtn.addEventListener("click", () => {
-
-    currentCourses.sort((a,b)=>b.credits-a.credits);
-
-    renderCourses(currentCourses);
-
-});
-
+sortBtn.addEventListener("click",sortButton);
 
 courseGrid.addEventListener("click",(event)=>{
-
-    const card = event.target.closest(".course-card");
-
-    if(!card) return;
-
-    const id = Number(card.dataset.id);
-
-    const course = courses.find(c=>c.id===id);
-
-    selected.textContent =
-    `Selected Course: ${course.name} | Grade: ${course.grade}`;
-
-});
+    const card = event.target.closest(".course-card")
+    alert(`
+        Course Name: ${card.dataset.name}
+        Grade: ${card.dataset.grade}
+    `)
+})
