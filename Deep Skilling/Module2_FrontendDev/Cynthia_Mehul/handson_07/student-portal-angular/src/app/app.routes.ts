@@ -4,11 +4,11 @@ import { StudentProfile } from './student-profile/student-profile';
 
 export const routes: Routes = [
     {
-        path:'',
-        component:CourseList
+        path: '',
+        component: CourseList
     },
     {
-        path:'profile',
-        component:StudentProfile
+        path: 'profile',
+        component: StudentProfile
     }
 ];

@@ -1,5 +1,5 @@
 {
-  "name": "student-portal-vue",
+  "name": "student-portal-vue-js",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -9,31 +9,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "pinia": "^3.0.4",
-    "vue": "beta",
-    "vue-router": "^5.1.0"
+    "pinia": "^4.0.2",
+    "vue": "^3.5.40",
+    "vue-router": "^5.2.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.7",
-    "vite": "^8.0.16",
-    "vite-plugin-vue-devtools": "^8.1.2"
+    "@vitejs/plugin-vue": "^6.0.8",
+    "vite": "^8.1.5",
+    "vite-plugin-vue-devtools": "^8.1.5"
   },
   "engines": {
     "node": "^22.18.0 || >=24.12.0"
-  },
-  "overrides": {
-    "vue": "beta",
-    "@vue/compiler-core": "beta",
-    "@vue/compiler-dom": "beta",
-    "@vue/compiler-sfc": "beta",
-    "@vue/compiler-ssr": "beta",
-    "@vue/compiler-vapor": "beta",
-    "@vue/reactivity": "beta",
-    "@vue/runtime-core": "beta",
-    "@vue/runtime-dom": "beta",
-    "@vue/runtime-vapor": "beta",
-    "@vue/server-renderer": "beta",
-    "@vue/shared": "beta",
-    "@vue/compat": "beta"
   }
 }

@@ -1,0 +1,175 @@
+<!--
+Accessibility Audit — Initial Lighthouse Results
+Date: August 2, 2026
+
+Initial Accessibility Score: 97/100
+
+Flagged Issue:
+1. Heading elements are not in a sequentially-descending order.
+   - Lighthouse detected an <h3> element that skips a heading level.
+   - This will be fixed by maintaining a logical heading hierarchy:
+     h1 → h2 → h3.
+
+Manual accessibility checks are also required because Lighthouse
+cannot automatically detect every accessibility issue.
+
+Image audit:
+- No <img> elements are currently used in the Student Portal.
+- Therefore, no alt attributes are required at this stage.
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Portal</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/css-vars-ponyfill@2"></script>
+    <script type="module" src="app.js"></script>
+</head>
+<body>
+
+<header>
+    <p class="site-title">Student Portal</p>
+
+    <button
+        id="menu-toggle"
+        type="button"
+        aria-label="Toggle navigation menu"
+        aria-expanded="false"
+        aria-controls="main-navigation"
+    >
+        ☰
+    </button>
+    <nav id="main-navigation" aria-label="Main navigation">
+        <ul>
+            <li>
+                <a href="#hero" aria-current="page">Home</a>
+            </li>
+
+            <li>
+                <a href="#courses">Courses</a>
+            </li>
+
+            <li>
+                <a href="#profile">Profile</a>
+            </li>
+
+            <li>
+                <a href="#">Grades</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+
+    <section id="hero">
+        <h1>Welcome to Student Portal</h1>
+        <p>Discover courses, track your grades, and explore your learning journey.</p>
+        <button>Explore Courses</button>
+    </section>
+
+    <section id="stats" aria-label="Student statistics">
+
+        <div class="stat">
+            <p class="stat-value">3</p>
+            <p>Courses Enrolled</p>
+        </div>
+
+        <div class="stat">
+            <p class="stat-value">3.8</p>
+            <p>GPA</p>
+        </div>
+
+        <div class="stat">
+            <p class="stat-value">6</p>
+            <p>Semester</p>
+        </div>
+
+    </section>
+
+    <section id="courses">
+
+        <h2>Available Courses</h2>
+
+        <label for="search-courses">Search courses</label>
+
+        <input
+            id="search-courses"
+            type="search"
+            placeholder="Search by course name...">
+
+        <button id="sort-button" onclick="sortButton()">
+            Sort by Credits
+        </button>
+
+        <div class="course-grid"></div>
+
+        <p id="search-results"
+            role="status"
+            aria-live="polite"></p>
+        <p id="credits"></p>
+
+    </section>
+
+    <section id="profile">
+
+    <h2>Student Profile</h2>
+
+    <form id="profile-form">
+
+        <div class="form-group">
+            <label for="student-name">Student Name</label>
+
+            <input
+                type="text"
+                id="student-name"
+                name="student-name"
+                placeholder="Enter your name"
+                autocomplete="name"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="student-email">Email Address</label>
+
+            <input
+                type="email"
+                id="student-email"
+                name="student-email"
+                placeholder="Enter your email"
+                autocomplete="email"
+                required
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="student-department">Department</label>
+
+            <input
+                type="text"
+                id="student-department"
+                name="student-department"
+                placeholder="Enter your department"
+                required
+            >
+        </div>
+
+        <button type="submit">Save Profile</button>
+
+    </form>
+
+</section>
+
+</main>
+
+<footer>
+    <p>&copy; 2026 Student Portal. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>

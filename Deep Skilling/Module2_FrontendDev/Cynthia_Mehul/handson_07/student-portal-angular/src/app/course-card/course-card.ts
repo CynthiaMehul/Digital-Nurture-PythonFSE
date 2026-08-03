@@ -1,4 +1,4 @@
-import { Component,Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-course-card',
@@ -7,10 +7,8 @@ import { Component,Input } from '@angular/core';
   styleUrl: './course-card.css',
 })
 export class CourseCard {
-
-  @Input() name: string = '';
-  @Input() code: string = '';
-  @Input() credits: number = 0;
-  @Input() grade: string = '';
-
+  @Input() name='';
+  @Input() code='';
+  @Input() credits=0;
+  @Input() grade='';
 }

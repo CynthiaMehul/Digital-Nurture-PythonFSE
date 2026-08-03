@@ -1,94 +1,115 @@
-<script setup>
-import { useRoute, useRouter } from 'vue-router';
-
-// Initialize our router hooks
-const route = useRoute();
-const router = useRouter();
-
-// Step 114: Get the ID from the URL (e.g., /courses/2 -> id is '2')
-const courseId = route.params.id;
-
-// A temporary fake course to display until we set up Pinia state
-const course = {
-  name: `Course ${courseId} Details`,
-  description: 'This is a fantastic course that will teach you everything you need to know.'
-};
-
-// Step 115: Programmatic Navigation
-const handleEnroll = () => {
-  // This is exactly like React's navigate('/profile')
-  router.push('/profile');
-};
-</script>
-
 <template>
-  <div class="detail-container">
-    <h2>{{ course.name }}</h2>
-    <p class="course-id">Course ID Reference: {{ courseId }}</p>
-    <p>{{ course.description }}</p>
-    
-    <button @click="handleEnroll" class="enroll-btn">
-      Enroll in Course
-    </button>
-  </div>
+  <main>
+    <h1>Course Details</h1>
+
+    <div v-if="course" class="course-details">
+      <h2>{{ course.name }}</h2>
+
+      <p><strong>Course ID:</strong> {{ course.id }}</p>
+      <p><strong>Course Code:</strong> {{ course.code }}</p>
+      <p><strong>Credits:</strong> {{ course.credits }}</p>
+      <p><strong>Grade:</strong> {{ course.grade }}</p>
+
+      <button @click="enrollCourse">
+        Enroll
+      </button>
+    </div>
+
+    <p v-else>
+      Course not found.
+    </p>
+  </main>
 </template>
 
+<script setup>
+import { computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
+const route = useRoute()
+const router = useRouter()
+
+const courses = [
+  {
+    id: 1,
+    name: 'Introduction to Vue',
+    code: 'VUE101',
+    credits: 4,
+    grade: 'A'
+  },
+  {
+    id: 2,
+    name: 'JavaScript Fundamentals',
+    code: 'JS201',
+    credits: 3,
+    grade: 'A+'
+  },
+  {
+    id: 3,
+    name: 'Database Management Systems',
+    code: 'DBMS301',
+    credits: 4,
+    grade: 'B+'
+  },
+  {
+    id: 4,
+    name: 'Computer Networks',
+    code: 'CN401',
+    credits: 3,
+    grade: 'A'
+  },
+  {
+    id: 5,
+    name: 'Machine Learning',
+    code: 'ML501',
+    credits: 4,
+    grade: 'A+'
+  }
+]
+
+const course = computed(() => {
+  return courses.find(
+    (course) => course.id === Number(route.params.id)
+  )
+})
+function enrollCourse() {
+  router.push('/profile')
+}
+</script>
+
 <style scoped>
-.detail-container {
-  max-width: 600px;
-  margin: 40px auto;
+main {
   padding: 40px;
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  background-color: var(--color-background);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
-.detail-container h2 {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--color-heading);
-  margin-bottom: 8px;
-  letter-spacing: -0.02em;
+.course-details {
+  max-width: 500px;
+  margin-top: 25px;
+  padding: 25px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: white;
 }
 
-.course-id {
-  color: #6366f1; /* Indigo */
-  font-size: 0.85rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: 24px;
+.course-details h2 {
+  margin-bottom: 20px;
 }
 
-.detail-container p {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  color: var(--color-text);
-  margin-bottom: 32px;
+.course-details p {
+  margin: 10px 0;
 }
 
-.enroll-btn {
-  background-color: #6366f1; /* Indigo */
-  color: white;
+button {
+  margin-top: 20px;
+  padding: 10px 18px;
   border: none;
-  padding: 14px 28px;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 8px;
+  border-radius: 6px;
+  background-color: #333;
+  color: white;
   cursor: pointer;
-  width: 100%;
-  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 6px rgba(99, 102, 241, 0.2);
+  font-size: 16px;
 }
 
-.enroll-btn:hover {
-  background-color: #4f46e5;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(99, 102, 241, 0.25);
-}
-
-.enroll-btn:active {
-  transform: translateY(0);
+button:hover {
+  opacity: 0.85;
 }
 </style>

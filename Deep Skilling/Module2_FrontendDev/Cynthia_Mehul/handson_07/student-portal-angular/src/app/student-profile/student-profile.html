@@ -1,39 +1,57 @@
-<h2>Edit Student Profile</h2>
+<h2>Student Profile</h2>
 
-<form [formGroup]="profileForm" (ngSubmit)="onSubmit()" style="max-width: 400px; display: flex; flex-direction: column; gap: 15px;">
-
-  <div>
-    <label>Full Name:</label><br>
-    <input type="text" formControlName="name" style="width: 100%; padding: 8px;">
-    
-    @if (profileForm.get('name')?.invalid && profileForm.get('name')?.touched) {
-      <div style="color: red; font-size: 12px; margin-top: 5px;">Name is required.</div>
-    }
-  </div>
+<form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
 
   <div>
-    <label>Email Address:</label><br>
-    <input type="email" formControlName="email" style="width: 100%; padding: 8px;">
-    
-    @if (profileForm.get('email')?.invalid && profileForm.get('email')?.touched) {
-      <div style="color: red; font-size: 12px; margin-top: 5px;">Enter a valid email.</div>
-    }
+    <label for="name">Name</label>
+
+    <input
+      id="name"
+      type="text"
+      formControlName="name">
+
+    <p *ngIf="profileForm.get('name')?.touched &&
+        profileForm.get('name')?.invalid">
+        Name is required
+    </p>
   </div>
+
+  <br>
 
   <div>
-    <label>Current Semester (1-8):</label><br>
-    <input type="number" formControlName="semester" style="width: 100%; padding: 8px;">
-    
-    @if (profileForm.get('semester')?.invalid && profileForm.get('semester')?.touched) {
-      <div style="color: red; font-size: 12px; margin-top: 5px;">Semester must be between 1 and 8.</div>
-    }
+    <label for="email">Email</label>
+
+    <input
+      id="email"
+      type="email"
+      formControlName="email">
+
+    <p *ngIf="profileForm.get('email')?.touched &&
+        profileForm.get('email')?.invalid">
+        Enter a valid email
+    </p>
   </div>
 
-  <button 
-    type="submit" 
-    [disabled]="profileForm.invalid"
-    style="padding: 10px; background-color: #007bff; color: white; border: none; cursor: pointer;">
-    Save Profile
-  </button>
+  <br>
+
+  <div>
+    <label for="semester">Semester</label>
+
+    <input
+      id="semester"
+      type="number"
+      formControlName="semester">
+
+    <p *ngIf="profileForm.get('semester')?.touched &&
+        profileForm.get('semester')?.invalid">
+        Semester must be between 1 and 8
+    </p>
+  </div>
+
+  <br>
+
+    <button type="submit" [disabled]="profileForm.invalid">
+        Submit Profile
+    </button>
 
 </form>

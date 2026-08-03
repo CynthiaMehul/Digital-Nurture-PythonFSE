@@ -1,11 +1,23 @@
+<template>
+  <main>
+    <h1>Welcome to the Student Portal</h1>
+
+    <p>
+      Manage your courses, view course details, and track your enrollments.
+    </p>
+  </main>
+</template>
+
 <script setup>
 </script>
 
-<template>
-  <div>
-    <h1>this is HomeView</h1>
-  </div>
-</template>
-
 <style scoped>
+main {
+  padding: 40px;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 15px;
+}
 </style>

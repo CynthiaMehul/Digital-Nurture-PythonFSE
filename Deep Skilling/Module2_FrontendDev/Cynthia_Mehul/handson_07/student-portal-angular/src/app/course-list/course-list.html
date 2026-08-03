@@ -1,26 +1,19 @@
-<h2>My Enrolled Courses</h2>
+<h1>Course List</h1>
 
-<div style="margin-bottom: 20px;">
-    <input type="text" [(ngModel)]="searchTerm" placeholder="Search for a course..."
-        style="padding: 5px; width: 250px;" />
-    <p>You are searching for: <strong>{{ searchTerm }}</strong></p>
-</div>
+<input type="text" placeholder="Search Courses" [(ngModel)]="searchTerm">
 
-@if (isLoading) {
-  <div style="font-style: italic; color: #666;">
-    Loading courses from the server... ⏳
-  </div>
-} @else {
-  @for (course of filteredCourses; track course.code) {
-    <app-course-card
-        [name]="course.name"
-        [code]="course.code"
-        [credits]="course.credits"
-        [grade]="course.grade">
-    </app-course-card>
-  } @empty {
-    <div style="color: red; margin-top: 10px;">
-      No courses found matching "{{ searchTerm }}".
-    </div>
-  }
-}
+<p *ngIf="loading">
+  Loading courses...
+</p>
+
+<p *ngIf="!loading && filteredCourses.length === 0">
+  No courses found
+</p>
+
+<app-course-card
+    *ngFor="let course of filteredCourses"
+    [name]="course.name"
+    [code]="course.code"
+    [credits]="course.credits"
+    [grade]="course.grade">
+</app-course-card>
